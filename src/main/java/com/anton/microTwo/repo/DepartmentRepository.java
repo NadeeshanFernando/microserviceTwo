@@ -4,9 +4,14 @@ import com.anton.microTwo.model.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author by nadeeshan_fdz
+ */
+
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
-//    @Query("SELECT e from Employee e left join e.employee e where e.id=?1")
-//    List<Employee> findByParentEntityId(Long id);
+    boolean existsByDeptName(String deptName);
+
+    boolean existsByDeptNameAndDeptIdNot(String deptName, long deptId);
 }

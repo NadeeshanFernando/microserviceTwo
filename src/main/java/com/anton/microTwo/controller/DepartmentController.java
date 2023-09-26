@@ -1,71 +1,46 @@
 package com.anton.microTwo.controller;
 
+import com.anton.microTwo.dto.DepartmentDto;
+import com.anton.microTwo.dto.Response;
 import com.anton.microTwo.model.Department;
 import com.anton.microTwo.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
+/**
+ * @author by nadeeshan_fdz
+ */
 
 @RestController
-@RequestMapping("/microTwo")
+@RequestMapping("/microTwo/department")
 public class DepartmentController {
     @Autowired
     DepartmentService departmentService;
 
-    //Add Department
-    @PostMapping(path="/addDepartment")
-    public ResponseEntity<Department> createDepartment(@RequestBody Department department){
-        Department newDepartment = departmentService.createDepartment(department);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newDepartment);
+    @PostMapping
+    public ResponseEntity<Response<Department>> saveDepartment(@RequestBody DepartmentDto departmentDto){
+        Response<Department> response = departmentService.saveDepartment(departmentDto);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    //Get Department
-    @GetMapping (path = "/getDepartment")
-    public ResponseEntity<List<Department>> getDepartment(){
-        List<Department> getDepartment = departmentService.getDepartment();
-        if(getDepartment != null){
-            return ResponseEntity.ok(getDepartment);
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping
+    public ResponseEntity<Response<List<Department>>> getDepartment(){
+        Response<List<Department>> response = departmentService.getDepartment();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping (path = "/getDepartment/{id}")
-    public ResponseEntity<Department> getDepartmentByID(@PathVariable Long id){
-        Department getDepartment = departmentService.getDepartmentByID(id);
-        if(getDepartment != null){
-            return ResponseEntity.ok(getDepartment);
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<Department>> getDepartmentById(@PathVariable Long id){
+        Response<Department> response = departmentService.getDepartmentById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    //Update Department
-    @PutMapping (path = "/putDepartment/{id}")
-    public ResponseEntity<?>updateEmployee (@RequestBody Department department, @PathVariable long id){
-        Optional<Department> findDepartment = Optional.ofNullable(departmentService.getDepartmentById(id));
-        if(findDepartment.isPresent()){
-            Department updateDepartment = findDepartment.get();
-            updateDepartment.setDeptName(department.getDeptName());
-            return new ResponseEntity<>(departmentService.updateDepartment(updateDepartment), HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-    //Delete Department
-    @DeleteMapping(path = "/deleteDepartment/{id}")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable long id){
-        boolean deleted = departmentService.deleteDepartment(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<Department>> updateDepartment(@RequestBody DepartmentDto departmentDto, @PathVariable Long id){
+        Response<Department> response = departmentService.updateDepartment(departmentDto,id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }
